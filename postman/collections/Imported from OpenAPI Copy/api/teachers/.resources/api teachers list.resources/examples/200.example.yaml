@@ -1,0 +1,31 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/teachers/"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: sessionid
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      [
+        {
+          "first_name": "string",
+          "id": 6698,
+          "last_name": "string"
+        },
+        {
+          "first_name": "string",
+          "id": 3814,
+          "last_name": "string"
+        }
+      ]
+order: 1000

@@ -1,0 +1,31 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/token/"
+  method: POST
+  headers:
+    Content-Type: application/json
+    Accept: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "password": "string",
+        "username": "string",
+        "access": 6290,
+        "refresh": 5119
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "access": "string",
+        "refresh": "string",
+        "password": 7464.563363706456,
+        "username": 7570.685867793584
+      }
+order: 1000

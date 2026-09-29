@@ -1,0 +1,28 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/schema/?format=json&lang=zh-hant"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/vnd.oai.openapi
+    - key: sessionid
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  queryParams:
+    format: json
+    lang: zh-hant
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "key_0": 7133.351734941301,
+        "key_1": false,
+        "key_2": false,
+        "key_3": 5325
+      }
+order: 1000

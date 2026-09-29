@@ -1,0 +1,26 @@
+$kind: http-request
+url: "{{baseUrl}}/api/teachers/:id/"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Accept: application/json
+pathVariables:
+  - key: id
+    value: "9390"
+    description: A unique integer value identifying this teacher.
+body:
+  type: json
+  content: |-
+    {
+      "first_name": "string",
+      "last_name": "string"
+    }
+auth:
+  type: apikey
+  credentials:
+    key: sessionid
+    value: "{{apiKey}}"
+    in: header
+settings: {}
+examples: ./.resources/api teachers partial update.resources/examples
+order: 3000

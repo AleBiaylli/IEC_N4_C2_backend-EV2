@@ -1,0 +1,44 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/courses/"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: sessionid
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  body:
+    type: json
+    content: |-
+      {
+        "name": "string",
+        "teacher": 5757,
+        "teacher_detail": {
+          "first_name": "string",
+          "last_name": "string",
+          "id": 5565
+        },
+        "id": false
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": 2869,
+        "name": "string",
+        "teacher": 6122,
+        "teacher_detail": {
+          "first_name": "string",
+          "id": 2360,
+          "last_name": "string"
+        }
+      }
+order: 1000

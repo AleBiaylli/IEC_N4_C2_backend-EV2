@@ -1,0 +1,31 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/student-courses/"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: sessionid
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      [
+        {
+          "course": 3959,
+          "id": 9793,
+          "student": 1097
+        },
+        {
+          "course": 5683,
+          "id": 5822,
+          "student": 716
+        }
+      ]
+order: 1000

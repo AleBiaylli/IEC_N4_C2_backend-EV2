@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}Cursos - Sistema Académico{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Gestión de Cursos</h2>
+    <button id="btn-add-course" class="btn btn-primary d-none" onclick="openCourseModal()">
+        + Agregar Curso
+    </button>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre del Curso</th>
+                <th>Descripción</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="courses-table-body">
+            <tr>
+                <td colspan="4" class="text-center">Cargando cursos...</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Crear/Editar Curso -->
+<div class="modal fade" id="courseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="courseModalTitle">Nuevo Curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="course-form">
+                    <input type="hidden" id="course-id">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre del Curso</label>
+                        <input type="text" class="form-control" id="course-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-control" id="course-description" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100" id="btn-save-course">Guardar Curso</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let courseModalBS = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicialización segura del Modal de Bootstrap
+    try {
+        const modalElem = document.getElementById('courseModal');
+        if (modalElem && typeof bootstrap !== 'undefined') {
+            courseModalBS = new bootstrap.Modal(modalElem);
+        }
+    } catch (e) {
+        console.warn("Error al inicializar modal de Cursos:", e);
+    }
+
+    // Mostrar botón de agregar si hay sesión activa
+    if (localStorage.getItem('access_token')) {
+        const btnAdd = document.getElementById('btn-add-course');
+        if (btnAdd) btnAdd.classList.remove('d-none');
+    }
+
+    loadCourses();
+
+    const formElem = document.getElementById('course-form');
+    if (formElem) {
+        formElem.addEventListener('submit', handleCourseForm);
+    }
+});
+
+function loadCourses() {
+    fetch('/api/courses/', { method: 'GET', headers: getAuthHeaders() })
+    .then(res => {
+        if (res.status === 401 || res.status === 403) {
+            alert('Sesión expirada o sin permisos. Inicia sesión nuevamente.');
+            window.location.href = "{% url 'login' %}";
+            throw new Error('No autorizado');
+        }
+        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+        return res.json();
+    })
+    .then(data => {
+        const tbody = document.getElementById('courses-table-body');
+        tbody.innerHTML = '';
+        
+        const courses = Array.isArray(data) ? data : (data.results || []);
+
+        if (courses.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center">No hay cursos registrados.</td></tr>';
+            return;
+        }
+
+        const isAuthenticated = !!localStorage.getItem('access_token');
+
+        courses.forEach(c => {
+            const safeC = JSON.stringify(c).replace(/"/g, '&quot;');
+            const nombre = c.name || c.title || c.nombre || 'Sin Nombre';
+            const descripcion = c.description || c.descripcion || 'Sin descripción';
+
+            const actions = isAuthenticated ? `
+                <button class="btn btn-sm btn-outline-warning me-1" onclick="editCourse(${safeC})">Editar</button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteCourse(${c.id})">Eliminar</button>
+            ` : '<span class="text-muted small">Solo lectura</span>';
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${c.id}</td>
+                    <td><strong>${nombre}</strong></td>
+                    <td>${descripcion}</td>
+                    <td class="text-center">${actions}</td>
+                </tr>
+            `;
+        });
+    })
+    .catch(err => {
+        console.error("Error al cargar cursos:", err);
+        document.getElementById('courses-table-body').innerHTML = 
+            `<tr><td colspan="4" class="text-center text-danger">Error al cargar datos (${err.message}).</td></tr>`;
+    });
+}
+
+function openCourseModal() {
+    document.getElementById('course-form').reset();
+    document.getElementById('course-id').value = '';
+    document.getElementById('courseModalTitle').innerText = 'Nuevo Curso';
+    if (courseModalBS) courseModalBS.show();
+}
+
+function editCourse(c) {
+    document.getElementById('course-id').value = c.id;
+    document.getElementById('course-name').value = c.name || c.title || c.nombre || '';
+    document.getElementById('course-description').value = c.description || c.descripcion || '';
+    
+    document.getElementById('courseModalTitle').innerText = 'Editar Curso ID: ' + c.id;
+    if (courseModalBS) courseModalBS.show();
+}
+
+async function handleCourseForm(e) {
+    e.preventDefault();
+    const id = document.getElementById('course-id').value;
+    const nameVal = document.getElementById('course-name').value;
+    const descVal = document.getElementById('course-description').value;
+
+    // Se envían llaves compatibles
+    const payload = {
+        name: nameVal,
+        title: nameVal,
+        nombre: nameVal,
+        description: descVal,
+        descripcion: descVal
+    };
+
+    const url = id ? `/api/courses/${id}/` : '/api/courses/';
+    const method = id ? 'PUT' : 'POST';
+
+    try {
+        const res = await fetch(url, {
+            method: method,
+            headers: getAuthHeaders(),
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            if (courseModalBS) courseModalBS.hide();
+            document.getElementById('course-form').reset();
+            document.getElementById('course-id').value = '';
+            loadCourses();
+        } else if (res.status === 401 || res.status === 403) {
+            alert('Sesión expirada o sin permisos.');
+            window.location.href = "{% url 'login' %}";
+        } else {
+            const errData = await res.json();
+            alert('Error al guardar el curso: ' + JSON.stringify(errData));
+        }
+    } catch (error) {
+        console.error('Error de red al guardar curso:', error);
+        alert('Error de conexión al servidor.');
+    }
+}
+
+async function deleteCourse(id) {
+    if (!confirm(`¿Estás seguro de eliminar el curso ID ${id}?`)) return;
+
+    try {
+        const res = await fetch(`/api/courses/${id}/`, {
+            method: 'DELETE',
+            headers: getAuthHeaders()
+        });
+
+        if (res.ok || res.status === 204) {
+            loadCourses();
+        } else if (res.status === 401 || res.status === 403) {
+            alert('Sesión expirada o sin permisos para eliminar.');
+            window.location.href = "{% url 'login' %}";
+        } else {
+            alert('No se pudo eliminar el curso.');
+        }
+    } catch (error) {
+        console.error('Error al eliminar curso:', error);
+        alert('Error de conexión al eliminar.');
+    }
+}
+</script>
+{% endblock %}

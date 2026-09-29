@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Página no encontrada - Sistema Académico{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="display-1 fw-bold text-primary">404</h1>
+            <h3 class="mb-3">¡Página no encontrada!</h3>
+            <p class="text-muted mb-4">
+                La dirección que ingresaste no existe, ha sido movida o la URL está mal escrita.
+            </p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="{% url 'home' %}" class="btn btn-primary btn-lg px-4 gap-3">
+                    Volver al Inicio
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

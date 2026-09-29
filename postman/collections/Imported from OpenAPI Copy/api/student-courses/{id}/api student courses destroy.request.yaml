@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/api/student-courses/:id/"
+method: DELETE
+pathVariables:
+  - key: id
+    value: "9390"
+    description: A unique integer value identifying this student course.
+auth:
+  type: apikey
+  credentials:
+    key: sessionid
+    value: "{{apiKey}}"
+    in: header
+settings: {}
+examples: ./.resources/api student courses destroy.resources/examples
+order: 4000

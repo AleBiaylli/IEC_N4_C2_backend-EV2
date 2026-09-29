@@ -1,0 +1,23 @@
+$kind: http-request
+url: "{{baseUrl}}/api/student-courses/"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "course": 7921,
+      "student": 6980,
+      "id": true
+    }
+auth:
+  type: apikey
+  credentials:
+    key: sessionid
+    value: "{{apiKey}}"
+    in: header
+settings: {}
+examples: ./.resources/api student courses create.resources/examples
+order: 3000

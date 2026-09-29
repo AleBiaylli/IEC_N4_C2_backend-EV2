@@ -1,0 +1,38 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/student-courses/:id/"
+  method: PUT
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: sessionid
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  pathVariables:
+    - key: id
+      value: "2035"
+      description: A unique integer value identifying this student course.
+  body:
+    type: json
+    content: |-
+      {
+        "course": 5042,
+        "student": 4691,
+        "id": "string"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "course": 3292,
+        "id": 642,
+        "student": 1663
+      }
+order: 1000

@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/api/teachers/:id/"
+method: DELETE
+pathVariables:
+  - key: id
+    value: "2035"
+    description: A unique integer value identifying this teacher.
+auth:
+  type: apikey
+  credentials:
+    key: sessionid
+    value: "{{apiKey}}"
+    in: header
+settings: {}
+examples: ./.resources/api teachers destroy.resources/examples
+order: 4000

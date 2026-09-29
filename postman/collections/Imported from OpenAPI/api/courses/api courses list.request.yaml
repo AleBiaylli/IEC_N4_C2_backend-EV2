@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/api/courses/"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: apikey
+  credentials:
+    key: sessionid
+    value: "{{apiKey}}"
+    in: header
+settings: {}
+examples: ./.resources/api courses list.resources/examples
+order: 2000

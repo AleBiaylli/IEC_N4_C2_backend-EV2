@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{baseUrl}}/api/students/:id/"
+method: GET
+headers:
+  Accept: application/json
+pathVariables:
+  - key: id
+    value: "9390"
+    description: A unique integer value identifying this student.
+auth:
+  type: apikey
+  credentials:
+    key: sessionid
+    value: "{{apiKey}}"
+    in: header
+settings: {}
+examples: ./.resources/api students retrieve.resources/examples
+order: 1000

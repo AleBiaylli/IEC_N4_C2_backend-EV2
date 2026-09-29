@@ -1,0 +1,23 @@
+$kind: http-request
+url: "{{baseUrl}}/api/teachers/"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "first_name": "string",
+      "last_name": "string",
+      "id": 5132
+    }
+auth:
+  type: apikey
+  credentials:
+    key: sessionid
+    value: "{{apiKey}}"
+    in: header
+settings: {}
+examples: ./.resources/api teachers create.resources/examples
+order: 3000

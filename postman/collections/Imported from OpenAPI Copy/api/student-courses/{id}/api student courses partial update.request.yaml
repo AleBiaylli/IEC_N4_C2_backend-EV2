@@ -1,0 +1,26 @@
+$kind: http-request
+url: "{{baseUrl}}/api/student-courses/:id/"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Accept: application/json
+pathVariables:
+  - key: id
+    value: "9390"
+    description: A unique integer value identifying this student course.
+body:
+  type: json
+  content: |-
+    {
+      "student": 9979,
+      "course": 5736
+    }
+auth:
+  type: apikey
+  credentials:
+    key: sessionid
+    value: "{{apiKey}}"
+    in: header
+settings: {}
+examples: ./.resources/api student courses partial update.resources/examples
+order: 3000

@@ -1,0 +1,47 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/courses/:id/"
+  method: PATCH
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: sessionid
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  pathVariables:
+    - key: id
+      value: "9390"
+      description: A unique integer value identifying this course.
+  body:
+    type: json
+    content: |-
+      {
+        "teacher_detail": {
+          "first_name": "string",
+          "id": 6236,
+          "last_name": "string"
+        },
+        "name": "string",
+        "teacher": 9922
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": 2869,
+        "name": "string",
+        "teacher": 6122,
+        "teacher_detail": {
+          "first_name": "string",
+          "id": 2360,
+          "last_name": "string"
+        }
+      }
+order: 1000
