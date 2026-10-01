@@ -83,10 +83,16 @@ WSGI_APPLICATION = 'IEC_N4_C2_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+AUTH_USER_MODEL = 'api.CustomUser'
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'bd_buses_interurbanos',
+        'USER': 'postgres',
+        'PASSWORD': 'Biaylli20070',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 

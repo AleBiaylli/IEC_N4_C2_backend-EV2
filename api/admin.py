@@ -1,29 +1,66 @@
 from django.contrib import admin
-from .models import Teacher, Course, Student, StudentCourse
+from django.contrib.auth.admin import UserAdmin
+from .models import (
+    CustomUser,
+    Terminal,
+    Ruta,
+    Bus,
+    Servicio,
+    AsientoServicio,
+    CarroPasajes,
+    ItemCarro,
+    Venta,
+    Boleto,
+)
 
+# Configuración del usuario personalizado en el Admin
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+    fieldsets = UserAdmin.fieldsets + (
+        ('Información de Rol', {'fields': ('role',)}),
+    )
+    list_display = ('username', 'email', 'first_name', 'last_name', 'role', 'is_staff')
+    list_filter = ('role', 'is_staff', 'is_superuser')
 
-from django.contrib import admin
-from .models import Teacher
+# Registro de entidades base
+@admin.register(Terminal)
+class TerminalAdmin(admin.ModelAdmin):
+    list_display = ('id', 'nombre', 'ciudad')
+    search_fields = ('nombre', 'ciudad')
 
-@admin.register(Teacher)
-class TeacherAdmin(admin.ModelAdmin):
-    pass  # Usa la representación __str__ predeterminada del modelo sin fallar
+@admin.register(Ruta)
+class RutaAdmin(admin.ModelAdmin):
+    list_display = ('id', 'origen', 'destino', 'duracion_estimada_minutos')
 
+@admin.register(Bus)
+class BusAdmin(admin.ModelAdmin):
+    list_display = ('id', 'patente', 'marca_modelo', 'capacidad_asientos')
+    search_fields = ('patente', 'marca_modelo')
 
-@admin.register(Course)
-class CourseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'teacher')
-    list_filter = ('teacher',)
-    search_fields = ('name',)
+@admin.register(Servicio)
+class ServicioAdmin(admin.ModelAdmin):
+    list_display = ('id', 'ruta', 'bus', 'fecha_hora_salida', 'fecha_hora_llegada')
+    list_filter = ('fecha_hora_salida',)
 
+@admin.register(AsientoServicio)
+class AsientoServicioAdmin(admin.ModelAdmin):
+    list_display = ('id', 'servicio', 'numero_asiento', 'tipo_asiento', 'precio', 'estado')
+    list_filter = ('tipo_asiento', 'estado', 'servicio')
 
-@admin.register(Student)
-class StudentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'first_name', 'last_name')
-    search_fields = ('first_name', 'last_name')
+# Registro de Carro y Transacciones
+@admin.register(CarroPasajes)
+class CarroPasajesAdmin(admin.ModelAdmin):
+    list_display = ('id', 'usuario', 'fecha_creacion')
 
+@admin.register(ItemCarro)
+class ItemCarroAdmin(admin.ModelAdmin):
+    list_display = ('id', 'carro', 'asiento_servicio', 'pasajero_nombre', 'pasajero_rut_pasaporte')
 
-@admin.register(StudentCourse)
-class StudentCourseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'student', 'course')
-    list_filter = ('course', 'student')
+@admin.register(Venta)
+class VentaAdmin(admin.ModelAdmin):
+    list_display = ('codigo_uuid', 'usuario', 'monto_total', 'estado', 'fecha_venta')
+    list_filter = ('estado', 'fecha_venta')
+
+@admin.register(Boleto)
+class BoletoAdmin(admin.ModelAdmin):
+    list_display = ('codigo_boleto', 'venta', 'pasajero_nombre', 'pasajero_rut_pasaporte', 'precio_historico')

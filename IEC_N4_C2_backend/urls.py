@@ -17,54 +17,58 @@ Including another URLconf
 """
 URL configuration for IEC_N4_C2_backend project.
 """
+
 from django.contrib import admin
-from django.urls import path, re_path, include
+from django.urls import path, include, re_path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+
 from api.views import (
-    login_view, 
     home_view, 
-    teachers_view, 
-    courses_view, 
-    students_view,
-    custom_page_not_found_view
+    buscar_pasajes_view, 
+    detalle_asientos_view, 
+    mi_carro_view,
+    agregar_al_carro_html,
+    eliminar_item_carro_view,
+    editar_item_carro_view,
+    pago_web_view,
+    procesar_checkout_html,
+    confirmacion_compra_view,
+    login_web_view,
+    logout_web_view,
+    registro_web_view,
+    pagina_no_encontrada_view
 )
 
 urlpatterns = [
-    # Admin de Django
+    # Panel de administración de Django
     path('admin/', admin.site.urls),
 
-    # 1. RUTA DE LOGIN PERSONALIZADO
-    path('login/', login_view, name='login'),
-
-    # 2. RUTAS FRONTEND (Vistas HTML)
+    # Rutas del Portal Web HTML
     path('', home_view, name='home'),
-    path('teachers/', teachers_view, name='teachers_list'),
-    path('teachers/html/', teachers_view, name='teachers-list-html'),
-    path('courses/', courses_view, name='courses_list'),
-    path('courses/html/', courses_view, name='courses-list-html'),
-    path('students/', students_view, name='students_list'),
-    path('students/html/', students_view, name='students-list-html'),
+    path('login/', login_web_view, name='login_web'),
+    path('logout/', logout_web_view, name='logout_web'),
+    path('registro/', registro_web_view, name='registro_web'),
+    
+    path('buscar-pasajes/', buscar_pasajes_view, name='buscar_pasajes'),
+    path('reserva-asientos/<int:servicio_id>/', detalle_asientos_view, name='detalle_asientos'),
+    
+    # Flujo de Carro y Checkout
+    path('mi-carro/', mi_carro_view, name='mi_carro'),
+    path('carro/agregar/<int:asiento_id>/', agregar_al_carro_html, name='agregar_al_carro'),
+    path('carro/eliminar/<int:item_id>/', eliminar_item_carro_view, name='eliminar_item_carro'),
+    path('carro/editar/<int:item_id>/', editar_item_carro_view, name='editar_item_carro'),
+    path('pago/', pago_web_view, name='pago_web'),
+    path('carro/checkout/', procesar_checkout_html, name='procesar_checkout'),
+    path('confirmacion/<int:venta_id>/', confirmacion_compra_view, name='confirmacion_compra'),
 
-    # 3. ENDPOINTS API REST Y JWT
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-
-    # 4. REGISTRO OBLIGATORIO DEL NAMESPACE DE DRF
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-
-    # 5. RUTAS DE TU API REST
+    # Endpoints API REST Backend y Swagger
     path('api/', include('api.urls')),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 
-    # 6. RUTA COMODÍN (CATCH-ALL) PARA CUALQUIER PALABRA O RUTA NO REGISTRADA
-    # Importante: Debe ir OBLIGATORIAMENTE al final de la lista
-    re_path(r'^.*$', custom_page_not_found_view, name='catch_all_404'),
+    # Captura de rutas no coincidentes mediante re_path comodín
+    re_path(r'^.*$', pagina_no_encontrada_view, name='404_catchall'),
 ]
 
-# Manejador global por defecto de Django
-handler404 = 'api.views.custom_page_not_found_view'
+# Manejador global de producción para respuestas HTTP 404
+handler404 = 'api.views.pagina_no_encontrada_view'
